@@ -4,10 +4,10 @@ const totalPerformanceDisplay = document.getElementById('total-performance');
 let portfolio = [];
 
 document.getElementById('add-stock-btn').addEventListener('click', () => {
-  const symbol = document.getElementById('stock-symbol').value.toUpperCase();
-  if (symbol) {
-    fetchStockData(symbol);
-  }
+  const symbols = document.getElementById('stock-symbol').value.toUpperCase().split(',');
+  symbols.forEach(symbol => {
+    fetchStockData(symbol.trim());
+  });
 });
 
 function fetchStockData(symbol) {
@@ -20,11 +20,11 @@ function fetchStockData(symbol) {
         const stock = {
           symbol: stockData['01. symbol'],
           price: parseFloat(stockData['05. price']),
-          change: parseFloat(stockData['09. change'])
+          change: parseFloat(stockData['10. change percent'].replace('%', ''))
         };
         addToPortfolio(stock);
       } else {
-        alert('Stock symbol not found!');
+        alert(`Stock symbol ${symbol} not found!`);
       }
     })
     .catch(error => console.error('Error fetching stock data:', error));
@@ -60,5 +60,5 @@ function removeStock(index) {
 
 function calculateTotalPerformance() {
   let totalPerformance = portfolio.reduce((acc, stock) => acc + stock.change, 0);
-  totalPerformanceDisplay.textContent = totalPerformance.toFixed(2);
+  totalPerformanceDisplay.textContent = totalPerformance.toFixed(2) + '%';
 }
